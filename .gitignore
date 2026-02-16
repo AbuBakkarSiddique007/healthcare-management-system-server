@@ -7,4 +7,8 @@ build
 !.env.example
 
 
+/src/generated
+
+
 /generated/prisma
+package-lock.json
