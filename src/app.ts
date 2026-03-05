@@ -1,5 +1,5 @@
 import express, { Application, Request, Response } from "express";
-import { prisma } from "./app/lib/prisma";
+// import { prisma } from "./app/lib/prisma";
 import { indexRoute } from "./app/routes";
 
 const app: Application = express();
@@ -16,20 +16,7 @@ app.use("/api/v1", indexRoute)
 
 // Basic route
 app.get('/', async (req: Request, res: Response) => {
-    // const specialty = await prisma.specialty.create({
-    //     data: {
-    //         title: "Neurology",
-    //     }
-    // })
-
-    // res.status(200).json({
-    //     success: true,
-    //     message: "Specialty created successfully",
-    //     data: specialty
-    // })
-
-
-    res.send('Hello, TypeScript + Express!');
+    res.send('Hello World from Ph Health Server!');
 });
 
 export default app;
