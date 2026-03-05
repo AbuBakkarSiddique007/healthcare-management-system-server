@@ -1,6 +1,7 @@
 import express, { Application, Request, Response } from "express";
-// import { prisma } from "./app/lib/prisma";
 import { indexRoute } from "./app/routes";
+import globalErrorHandler from "./app/middlewares/globalErrorHandler";
+import notFount from "./app/middlewares/notFound";
 
 const app: Application = express();
 
@@ -18,5 +19,14 @@ app.use("/api/v1", indexRoute)
 app.get('/', async (req: Request, res: Response) => {
     res.send('Hello World from Ph Health Server!');
 });
+
+
+
+// Global Error Handler:
+app.use(globalErrorHandler)
+
+// Not Found Handler:
+app.use(notFount)
+
 
 export default app;
