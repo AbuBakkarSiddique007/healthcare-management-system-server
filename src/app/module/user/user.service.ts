@@ -1,4 +1,6 @@
+import { StatusCodes } from "http-status-codes";
 import { Role, Specialty } from "../../../generated/client/client";
+import AppError from "../../errorHelper/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { ICreateDoctorPayload } from "./user.interface";
@@ -14,7 +16,9 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
         })
 
         if (!specialty) {
-            throw new Error(`Specialty not found with id ${specialtyId}`)
+            // throw new Error(`Specialty not found with id ${specialtyId}`)
+
+            throw new AppError(StatusCodes.NOT_FOUND, `Specialty not found with id ${specialtyId}`)
         }
 
         specialties.push(specialty)
@@ -28,7 +32,9 @@ const createDoctor = async (payload: ICreateDoctorPayload) => {
     })
 
     if (userExist) {
-        throw new Error("User already exists")
+        // throw new Error("User already exists")
+
+        throw new AppError(StatusCodes.CONFLICT, "User already exists")
     }
 
     const userData = await auth.api.signUpEmail({

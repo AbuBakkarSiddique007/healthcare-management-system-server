@@ -5,10 +5,10 @@ export interface TErrorSources {
 
 
 export interface TErrorResponse {
-    statusCode? : number,
+    statusCode : number,
     success: boolean,
     message: string,
     errorSources: TErrorSources[],
-    error: undefined
+    stack?: string,
+    error?: unknown
 }
-

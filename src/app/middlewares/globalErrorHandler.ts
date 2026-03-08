@@ -6,6 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import z from "zod";
 import { TErrorResponse, TErrorSources } from "../interfaces/error.interfaces";
 import { handleZodError } from "../errorHelper/handleZodError";
+import AppError from "../errorHelper/AppError";
 
 
 const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -18,27 +19,43 @@ const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFun
 
     let statusCode = StatusCodes.INTERNAL_SERVER_ERROR
     let message = StatusCodes[statusCode] || "An unexpected error occurred"
+    let stack = err?.stack
     const error = err.message
 
-    if (err instanceof z.ZodError) {
+    // if (err instanceof z.ZodError) {
+    //     const simplifiedError = handleZodError(err)
 
+    //     statusCode = simplifiedError.statusCode
+    //     message = simplifiedError.message
+    //     errorSources = simplifiedError.errorSources
+    // }
+
+    if (err instanceof z.ZodError) {
         const simplifiedError = handleZodError(err)
 
-        statusCode = simplifiedError.statusCode
+        statusCode = simplifiedError.statusCode as number
         message = simplifiedError.message
         errorSources = [...simplifiedError.errorSources]
-
-        
-        err.issues.forEach(issue => {
-            errorSources.push({
-                // path: issue.path.length > 1 ? issue.path.join("=>") : issue.path[0].toString(),
-
-                path: issue.path.join("=>"),
-                message: issue.message
-            })
-        })
-
-    }    
+        stack = err.stack
+    }
+    else if (err instanceof AppError) {
+        statusCode = err.statusCode
+        message = err.message
+        stack = err.stack
+        errorSources = [{
+            path: "",
+            message: err.message
+        }]
+    }
+    else if (err instanceof Error) {
+        statusCode = StatusCodes.INTERNAL_SERVER_ERROR
+        message = err.message
+        stack = err.stack
+        errorSources = [{
+            path: "",
+            message: err.message
+        }]
+    }
 
     // res.status(statusCode).json({
     //     success: false,
@@ -48,11 +65,13 @@ const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFun
     // })
 
 
-     const errorResponse: TErrorResponse ={
+    const errorResponse: TErrorResponse = {
+        statusCode,
         success: false,
         message,
         errorSources,
-        error: envVars.NODE_ENV === "development" ? error : undefined,
+        stack: envVars.NODE_ENV === "development" ? stack : undefined,
+        error: envVars.NODE_ENV === "development" ? err : undefined,
     }
 
     return res.status(statusCode).json(errorResponse)

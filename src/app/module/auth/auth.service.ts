@@ -1,4 +1,6 @@
+import { StatusCodes } from "http-status-codes";
 import { UserStatus } from "../../../generated/client/enums";
+import AppError from "../../errorHelper/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 
@@ -24,7 +26,8 @@ const registerPatient = async (payload: IRegisterPatientPayload) => {
     })
 
     if (!data.user) {
-        throw new Error("User registration failed")
+        // throw new Error("User registration failed")
+        throw new AppError(StatusCodes.BAD_REQUEST, "User registration failed")
     }
 
     try {
@@ -81,11 +84,14 @@ const loginUser = async (payload: ILoginUserPayload) => {
     })
 
     if (data.user.status === UserStatus.BLOCKED) {
-        throw new Error("Your account is blocked. Please contact support.")
+        // throw new Error("Your account is blocked. Please contact support.")
+        throw new AppError(StatusCodes.FORBIDDEN, "Your account is blocked. Please contact support.")
     }
 
     if (data.user.isDeleted || data.user.status === UserStatus.DELETED) {
-        throw new Error("Your account is deleted. Please contact support.")
+        // throw new Error("Your account is deleted. Please contact support.")
+        throw new AppError(StatusCodes.NOT_FOUND, "Your account is deleted. Please contact support.")
+
     }
 
     return data
