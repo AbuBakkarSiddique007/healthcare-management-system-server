@@ -1,4 +1,5 @@
 import express, { Application, Request, Response } from "express";
+import cookieParser from "cookie-parser";
 import { indexRoute } from "./app/routes";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFount from "./app/middlewares/notFound";
@@ -10,6 +11,9 @@ app.use(express.urlencoded({ extended: true }));
 
 // Middleware to parse JSON bodies
 app.use(express.json());
+
+// Cookie parser (populates `req.cookies`)
+app.use(cookieParser());
 
 app.use("/api/v1", indexRoute)
 
