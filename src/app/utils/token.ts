@@ -16,6 +16,7 @@ const getAccessToken = (payload: JwtPayload) => {
     return accessToken
 }
 
+
 const getRefreshToken = (payload: JwtPayload) => {
     const refreshToken = jwtUtils.createToken(
         payload,
@@ -37,8 +38,11 @@ const setAccessTokenCookie = (res: Response, token: string) => {
         secure: isProd,
         sameSite: isProd ? "none" : "lax",
         path: "/",
-        // 1d
-        maxAge: 60 * 60 * 60 * 24,
+
+        // 1 day in milliseconds:
+        maxAge: 60 * 60 * 24 * 1000,
+
+
     })
 }
 
@@ -54,7 +58,7 @@ const setRefreshTokenCookie = (res: Response, token: string) => {
         sameSite: isProd ? "none" : "lax",
         path: "/",
         // 7d
-        maxAge: 60 * 60 * 60 * 24 * 7,
+        maxAge: 7 * 24 * 60 * 60 * 1000,
     })
 }
 
@@ -71,8 +75,8 @@ const setBetterAuthSessionCookie = (res: Response, token: string) => {
         secure: isProd,
         sameSite: isProd ? "none" : "lax",
         path: "/",
-        // 1 day: 
-        maxAge: 60 * 60 * 60 * 24,
+        // 1 day:
+        maxAge: 24 * 60 * 60 * 1000,
     })
 }
 

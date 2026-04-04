@@ -11,13 +11,13 @@ export interface ICreateDoctorPayload {
         address?: string;
 
         registrationNumber: string;
-        experienceInYears: number;
+        experience: number;
         gender: Gender;
         appointmentFee: number;
         qualification: string;
         currentWorkingPlace: string;
         designation: string;
     };
-    specialties : string[];
+    specialties: string[];
 }
 
