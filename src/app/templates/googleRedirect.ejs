@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Google Login</title>
+  </head>
+  <body>
+    <p>Redirecting to Google Login...</p>
+  </body>
+
+  <script>
+    (async () => {
+      try {
+        const response = await fetch(
+          "<%=betterAuthUrl %>/api/v1/auth/sign-in/social",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            credentials: "include",
+            body: JSON.stringify({
+              provider: "google",
+              callbackUrl: "<%=callbackUrl %>",
+            }),
+          },
+        );
+
+        const data = await response.json();
+
+        if (data.url) {
+          window.location.href = data.url;
+        } else {
+          document.body.innerHTML = `
+            <div>
+                <p>
+                   Error occurred while logging in with Google. Please try again. ${data.message || "Unknown error"}
+                </p>
+            </div>
+            `;
+        }
+      } catch (error) {
+        document.body.innerHTML = `
+            <div>
+                <p>
+                   Error occurred while logging in with Google. Please try again. ${error.message}
+                </p>
+            </div>
+            `;
+      }
+    })();
+  </script>
+</html>

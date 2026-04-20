@@ -3,8 +3,23 @@ import cookieParser from "cookie-parser";
 import { indexRoute } from "./app/routes";
 import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFount from "./app/middlewares/notFound";
+import path from "path";
+import cors from "cors"
+import { envVars } from "./config/env";
 
 const app: Application = express();
+
+// For Email Template:
+app.set("view engine", "ejs")
+app.set("views", path.resolve(process.cwd(), "src/app/templates"))
+
+app.use(cors({
+    origin: [envVars.FRONTEND_URL, envVars.BETTER_AUTH_URL, "http://localhost:3000", "http://localhost:5000"],
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"]
+}))
+
 
 // Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));
