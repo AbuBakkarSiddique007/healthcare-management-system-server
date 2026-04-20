@@ -5,7 +5,7 @@ import { Role, UserStatus } from "../../generated/client/enums";
 import AppError from "../errorHelper/AppError";
 import { StatusCodes } from "http-status-codes";
 import { jwtUtils } from "../utils/jwt";
-import { envVars } from "../../config/env";
+import { envVars } from "../config/env";
 
 export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Response, next: NextFunction) => {
     try {

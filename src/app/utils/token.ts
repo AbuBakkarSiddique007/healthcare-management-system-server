@@ -1,6 +1,6 @@
 import { JwtPayload, SignOptions } from "jsonwebtoken";
 import { jwtUtils } from "./jwt";
-import { envVars } from "../../config/env";
+import { envVars } from "../config/env";
 import { cookieUtils } from "./cookie";
 import { Response } from "express";
 

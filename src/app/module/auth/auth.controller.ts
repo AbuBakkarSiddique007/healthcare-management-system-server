@@ -6,7 +6,7 @@ import { StatusCodes } from "http-status-codes";
 import { tokenUtils } from "../../utils/token";
 import AppError from "../../errorHelper/AppError";
 import { cookieUtils } from "../../utils/cookie";
-import { envVars } from "../../../config/env";
+import { envVars } from "../../config/env";
 import { auth } from "../../lib/auth";
 
 const registerPatient = catchAsync(

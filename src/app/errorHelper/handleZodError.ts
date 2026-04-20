@@ -1,9 +1,9 @@
 import z from "zod";
 import { TErrorSources } from "../interfaces/error.interfaces";
 import { StatusCodes } from "http-status-codes";
-import { envVars } from "../../config/env";
+import { envVars } from "../config/env";
 
-export const handleZodError = (err: z.ZodError) =>{
+export const handleZodError = (err: z.ZodError) => {
     const errorSources: TErrorSources[] = []
 
     const statusCode = StatusCodes.BAD_REQUEST
@@ -18,7 +18,7 @@ export const handleZodError = (err: z.ZodError) =>{
         })
     })
 
-    
+
 
     return {
         success: false,

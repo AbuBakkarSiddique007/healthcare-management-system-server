@@ -6,7 +6,7 @@ import { prisma } from "../../lib/prisma";
 import { tokenUtils } from "../../utils/token";
 import { IRequestUser } from "../../interfaces/requestUser.interface";
 import { jwtUtils } from "../../utils/jwt";
-import { envVars } from "../../../config/env";
+import { envVars } from "../../config/env";
 import { JwtPayload } from "jsonwebtoken";
 import { IChangePassword, ILoginUserPayload, IRegisterPatientPayload, IResetPasswordPayload } from "./auth.interface";
 
@@ -287,10 +287,10 @@ const changePassword = async (payload: IChangePassword, sessionToken: string) =>
     )
 
     // Forcefully set needPasswordChange to false
-    if (isUserExist.needPasswordChange) {
+    if (session.user.needPasswordChange) {
         await prisma.user.update({
             where: {
-                id: isUserExist.id
+                id: session.user.id
             },
             data: {
                 needPasswordChange: false

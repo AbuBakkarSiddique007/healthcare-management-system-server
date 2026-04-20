@@ -5,7 +5,7 @@ import globalErrorHandler from "./app/middlewares/globalErrorHandler";
 import notFount from "./app/middlewares/notFound";
 import path from "path";
 import cors from "cors"
-import { envVars } from "./config/env";
+import { envVars } from "./app/config/env";
 
 const app: Application = express();
 
@@ -23,6 +23,7 @@ app.use(cors({
 
 // Enable URL-encoded form data parsing
 app.use(express.urlencoded({ extended: true }));
+
 
 // Middleware to parse JSON bodies
 app.use(express.json());
