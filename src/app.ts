@@ -6,8 +6,11 @@ import notFount from "./app/middlewares/notFound";
 import path from "path";
 import cors from "cors"
 import { envVars } from "./app/config/env";
+import qs from "qs";
 
 const app: Application = express();
+
+app.set("query parser", (str : string) => qs.parse(str));
 
 // For Email Template:
 app.set("view engine", "ejs")
