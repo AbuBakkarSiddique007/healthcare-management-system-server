@@ -80,17 +80,23 @@ export const auth = betterAuth({
         bearer(),
         emailOTP({
             overrideDefaultEmailVerification: true,
-
             async sendVerificationOTP({ email, otp, type }) {
-                console.log(`Auth OTP send requested: type=${type} email=${email} otp=${otp}`)
-
                 if (type === "email-verification") {
-
                     const user = await prisma.user.findUnique({
                         where: {
-                            email: email
+                            email,
                         }
                     })
+
+                    if (!user) {
+                        console.error(`User with email ${email} not found. Cannot send verification OTP.`);
+                        return;
+                    }
+
+                    if (user && user.role === Role.SUPER_ADMIN) {
+                        console.log(`User with email ${email} is a super admin. Skipping sending verification OTP.`);
+                        return;
+                    }
 
                     if (user && !user.emailVerified) {
                         sendEmail({
@@ -99,37 +105,32 @@ export const auth = betterAuth({
                             templateName: "otp",
                             templateData: {
                                 name: user.name,
-                                otp: otp
+                                otp,
                             }
                         })
                     }
-                }
-
-                else if (type === "forget-password") {
+                } else if (type === "forget-password") {
                     const user = await prisma.user.findUnique({
                         where: {
-                            email: email
+                            email,
                         }
                     })
 
                     if (user) {
                         sendEmail({
                             to: email,
-                            subject: "Reset your password",
+                            subject: "Password Reset OTP",
                             templateName: "otp",
                             templateData: {
                                 name: user.name,
-                                otp: otp
+                                otp,
                             }
                         })
-
                     }
                 }
-
             },
-            expiresIn: 2 * 60,
+            expiresIn: 2 * 60, // 2 minutes in seconds
             otpLength: 6,
-
         })
     ],
 
