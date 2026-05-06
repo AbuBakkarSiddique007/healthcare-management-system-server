@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { specialtyController } from "./specialty.controller";
+import { SpecialtyController } from "./specialty.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../../../generated/client/enums";
 import { multerUpload } from "../../config/multer.config";
@@ -13,17 +13,17 @@ router.post("/",
     // checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
     multerUpload.single("file"),
     validateRequest(specialtyValidation.createSpecialtyZodSchema),
-    specialtyController.createSpecialty)
+    SpecialtyController.createSpecialty)
 
-router.get("/", specialtyController.getAllSpecialties)
+router.get("/", SpecialtyController.getAllSpecialties)
 
 router.delete("/:id",
     checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
-    specialtyController.deleteSpecialty)
+    SpecialtyController.deleteSpecialty)
 
 router.patch("/:id",
     checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
-    specialtyController.updateSpecialty)
+    SpecialtyController.updateSpecialty)
 
 
 export const specialtyRoute = router

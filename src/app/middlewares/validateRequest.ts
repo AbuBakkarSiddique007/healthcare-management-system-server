@@ -16,11 +16,11 @@ export const validateRequest = (zodSchema: z.ZodObject) => {
         const parseResult = zodSchema.safeParse(req.body)
 
         if (!parseResult.success) {
-            next(parseResult.error)
+            return next(parseResult.error)
         }
 
         // Sanitizing the data:
         req.body = parseResult.data
-        next()
+        return next()
     }
 }

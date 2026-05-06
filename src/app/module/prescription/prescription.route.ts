@@ -3,6 +3,7 @@ import { checkAuth } from '../../middlewares/checkAuth';
 import { Role } from '../../../generated/client/enums';
 import { PrescriptionController } from './prescription.controller';
 import { validateRequest } from '../../middlewares/validateRequest';
+import { PrescriptionValidation } from './prescription.validation';
 
 const router = express.Router();
 

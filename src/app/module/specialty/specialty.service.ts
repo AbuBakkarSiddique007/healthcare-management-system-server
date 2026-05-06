@@ -1,8 +1,8 @@
-import { Specialty } from "../../../generated/client/client";
+import { Prisma, Specialty } from "../../../generated/client/client";
 import { prisma } from "../../lib/prisma";
 
 
-const createSpecialty = async (payload: Specialty): Promise<Specialty> => {
+const createSpecialty = async (payload: Prisma.SpecialtyCreateInput): Promise<Specialty> => {
 
     const specialty = await prisma.specialty.create({
         data: payload
@@ -41,7 +41,7 @@ const deleteSpecialty = async (specialtyId: string) => {
 }
 
 
-const updateSpecialty = async (specialtyId: string, payload: Specialty) => {
+const updateSpecialty = async (specialtyId: string, payload: Prisma.SpecialtyUpdateInput) => {
 
     const specialty = await prisma.specialty.findUnique({
         where: {

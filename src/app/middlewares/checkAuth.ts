@@ -14,62 +14,60 @@ export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Res
         const sessionToken = cookieUtils.getCookie(req, "better-auth.session_token")
 
         if (!sessionToken) {
-            throw new Error("Unauthorized: No session token provided")
+            throw new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized: No session token provided")
         }
 
-        if (sessionToken) {
-            const sessionExist = await prisma.session.findFirst({
-                where: {
-                    token: sessionToken,
-                    expiresAt: {
-                        gt: new Date()
-                    },
+        const sessionExist = await prisma.session.findFirst({
+            where: {
+                token: sessionToken,
+                expiresAt: {
+                    gt: new Date(),
                 },
-                include: {
-                    user: true
-                }
-            })
+            },
+            include: {
+                user: true,
+            },
+        })
 
-            if (sessionExist && sessionExist.user) {
-                const user = sessionExist.user
+        if (!sessionExist || !sessionExist.user) {
+            throw new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized: Invalid or expired session")
+        }
 
-                const now = new Date()
+        const user = sessionExist.user
 
-                const expiresAt = new Date(sessionExist.expiresAt)
-                const createAt = new Date(sessionExist.createdAt)
+        const now = new Date()
 
-                const sessionLifeTime = expiresAt.getTime() - createAt.getTime()
-                const timeRemaining = expiresAt.getTime() - now.getTime()
-                const percentRemaining = (timeRemaining / sessionLifeTime) * 100
+        const expiresAt = new Date(sessionExist.expiresAt)
+        const createAt = new Date(sessionExist.createdAt)
 
-                if (percentRemaining < 20) {
-                    res.setHeader("X-Session-Expiring", "true")
-                    res.setHeader("X-Session-Expires-In", expiresAt.toISOString())
-                    res.setHeader("X-TimeRemaining", timeRemaining.toString())
+        const sessionLifeTime = expiresAt.getTime() - createAt.getTime()
+        const timeRemaining = expiresAt.getTime() - now.getTime()
+        const percentRemaining = (timeRemaining / sessionLifeTime) * 100
 
-                    console.log("Session Expiring Soon!!!");
-                }
+        if (percentRemaining < 20) {
+            res.setHeader("X-Session-Expiring", "true")
+            res.setHeader("X-Session-Expires-In", expiresAt.toISOString())
+            res.setHeader("X-TimeRemaining", timeRemaining.toString())
 
-                if (user.status === UserStatus.BLOCKED || user.status === UserStatus.DELETED) {
-                    throw new AppError(StatusCodes.UNAUTHORIZED, "User is blocked or deleted")
-                }
+            console.log("Session Expiring Soon!!!");
+        }
 
-                if (user.isDeleted) {
-                    throw new AppError(StatusCodes.UNAUTHORIZED, "User is deleted")
-                }
+        if (user.status === UserStatus.BLOCKED || user.status === UserStatus.DELETED) {
+            throw new AppError(StatusCodes.UNAUTHORIZED, "User is blocked or deleted")
+        }
 
-                if (authRoles.length > 0 && !authRoles.includes(user.role)) {
-                    throw new AppError(StatusCodes.FORBIDDEN, "Forbidden: You don't have permission to access this resource")
-                }
+        if (user.isDeleted) {
+            throw new AppError(StatusCodes.UNAUTHORIZED, "User is deleted")
+        }
 
+        if (authRoles.length > 0 && !authRoles.includes(user.role)) {
+            throw new AppError(StatusCodes.FORBIDDEN, "Forbidden: You don't have permission to access this resource")
+        }
 
-                // 
-                req.user = {
-                    userId: user.id,
-                    role: user.role,
-                    email: user.email,
-                }
-            }
+        req.user = {
+            userId: user.id,
+            role: user.role,
+            email: user.email,
         }
 
 
@@ -88,6 +86,14 @@ export const checkAuth = (...authRoles: Role[]) => async (req: Request, res: Res
 
         if (authRoles.length > 0 && !authRoles.includes(verifiedToken.data!.role)) {
             throw new AppError(StatusCodes.FORBIDDEN, "Forbidden: You don't have permission to access this resource")
+        }
+
+        // Optional defense-in-depth: ensure token claims match the active session user
+        if (
+            typeof verifiedToken.data?.userId === "string" &&
+            verifiedToken.data.userId !== req.user.userId
+        ) {
+            throw new AppError(StatusCodes.UNAUTHORIZED, "Unauthorized: Token does not match session")
         }
 
         next()

@@ -2,8 +2,7 @@ import { Router } from "express";
 import { authController } from "./auth.controller";
 import { checkAuth } from "../../middlewares/checkAuth";
 import { Role } from "../../../generated/client/enums";
-import { toNodeHandler } from "better-auth/node";
-import { auth } from "../../lib/auth";
+
 
 const router = Router()
 
@@ -45,7 +44,6 @@ router.get("/google/success", authController.googleLoginSuccess)
 router.get("/oauth/error", authController.handleOAuthError)
 
 
-// Better Auth Fallback:
-router.use(toNodeHandler(auth))
+
 
 export const authRoute = router

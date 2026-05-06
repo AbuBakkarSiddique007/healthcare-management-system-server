@@ -10,7 +10,7 @@ const updatePatientProfileZodSchema = z.object({
         address : z.string("Address must be a string").min(1, "Address cannot be empty").max(200, "Address must be less than 200 characters").optional(),
     }).optional(),
     patientHealthData : z.object({
-        gender: z.enum([Gender.FEMALE, Gender.MALE, Gender.OTHER]).optional(),
+        gender: z.enum([Gender.FEMALE, Gender.MALE]).optional(),
         dateOfBirth: z.string().refine((date) => !isNaN(Date.parse(date)), {
             message: "Invalid date format",
         }).optional(),

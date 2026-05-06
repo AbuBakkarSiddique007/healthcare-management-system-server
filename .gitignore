@@ -13,3 +13,6 @@ build
 /generated/prisma
 package-lock.json
 package-lock.json
+
+# Internal docs (generated)
+docs/*

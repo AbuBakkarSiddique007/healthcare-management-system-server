@@ -1,4 +1,5 @@
 import { envVars } from "../../config/env";
+import PDFDocument from 'pdfkit';
 
 
 interface PrescriptionData {

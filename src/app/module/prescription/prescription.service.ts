@@ -8,6 +8,7 @@ import AppError from "../../errorHelper/AppError";
 import { deleteFileFromCloudinary, uploadFileToCloudinary } from "../../config/cloudinary.config";
 import { sendEmail } from "../../utils/email";
 import { Role } from "../../../generated/client/enums";
+import { generatePrescriptionPDF } from "./prescription.utils";
 
 
 const givePrescription = async (user: IRequestUser, payload: ICreatePrescriptionPayload) => {

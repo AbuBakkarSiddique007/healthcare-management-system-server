@@ -163,22 +163,27 @@ const logOutUser = catchAsync(
         await authService.logOutUser(betterAuthSessionToken)
 
         // Clear cookies:
+        const isProd = envVars.NODE_ENV === "production"
+
         cookieUtils.clearCookie(res, "accessToken", {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
+            path: "/",
         })
 
         cookieUtils.clearCookie(res, "refreshToken", {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
+            path: "/",
         })
 
         cookieUtils.clearCookie(res, "better-auth.session_token", {
             httpOnly: true,
-            secure: true,
-            sameSite: "strict",
+            secure: isProd,
+            sameSite: isProd ? "none" : "lax",
+            path: "/",
         })
 
 
